@@ -24,6 +24,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Session")
 	void JoinGameSesion(const FOnlineSessionSearchResult& SearchResult);
+
+	UFUNCTION(BlueprintCallable, Category = "Session")
+	void DestroySession();
 private:
 	IOnlineSessionPtr Session;
 
@@ -35,8 +38,10 @@ private:
 	FDelegateHandle CreateHandle;
 	FDelegateHandle FindHandle;
 	FDelegateHandle JoinHandle;
+	FDelegateHandle DestroyHandle;
 
 	void OnCreateSessionCompleted(FName SessionName, bool bSuccessful);
 	void OnFindSessionsCompleted(bool bSuccessful);
 	void OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	void OnDestroySessionCompleted(FName SessionName, bool bSuccessful);
 };

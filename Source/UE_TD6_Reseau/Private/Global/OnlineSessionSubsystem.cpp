@@ -72,6 +72,19 @@ void UOnlineSessionSubsystem::JoinGameSesion(const FOnlineSessionSearchResult& S
 	}
 }
 
+void UOnlineSessionSubsystem::DestroySession()
+{
+	if (!Session.IsValid()) return;
+
+	DestroyHandle = Session->AddOnDestroySessionCompleteDelegate_Handle(FOnDestroySessionCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnDestroySessionCompleted));
+
+	if (!Session->DestroySession(NAME_GameSession))
+	{
+		Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroyHandle);
+		return;
+	}
+}
+
 void UOnlineSessionSubsystem::OnCreateSessionCompleted(FName SessionName, bool bSuccessful)
 {
 	if(Session)
@@ -103,4 +116,10 @@ void UOnlineSessionSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinS
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
 	PlayerController->ClientTravel(ConnectString, ETravelType::TRAVEL_Absolute);
+}
+
+void UOnlineSessionSubsystem::OnDestroySessionCompleted(FName SessionName, bool bSuccessful)
+{
+	if(Session)
+		Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroyHandle);
 }
