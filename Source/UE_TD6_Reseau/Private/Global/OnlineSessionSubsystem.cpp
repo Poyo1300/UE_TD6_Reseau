@@ -57,6 +57,21 @@ void UOnlineSessionSubsystem::FindSessions(int32 MaxSearchResults, bool bIsLANQu
 	}
 }
 
+void UOnlineSessionSubsystem::JoinGameSesion(const FOnlineSessionSearchResult& SessionResult)
+{
+	if (!Session.IsValid()) return;
+
+	JoinHandle = Session->AddOnJoinSessionCompleteDelegate_Handle(FOnJoinSessionCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnJoinSessionCompleted));
+
+	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+
+	if (!Session->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
+	{
+		Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinHandle);
+		return;
+	}
+}
+
 void UOnlineSessionSubsystem::OnCreateSessionCompleted(FName SessionName, bool bSuccessful)
 {
 	if(Session)
@@ -73,4 +88,19 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 		Session->ClearOnFindSessionsCompleteDelegate_Handle(FindHandle);
 
 	SearchResults = LastSessionSearch->SearchResults;
+}
+
+void UOnlineSessionSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	FString ConnectString;
+
+	if (!Session) return;
+
+	Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinHandle);
+
+	if (Result != EOnJoinSessionCompleteResult::Success ||!Session->GetResolvedConnectString(NAME_GameSession, ConnectString)) return;
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	PlayerController->ClientTravel(ConnectString, ETravelType::TRAVEL_Absolute);
 }

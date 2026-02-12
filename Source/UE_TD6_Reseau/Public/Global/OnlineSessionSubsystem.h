@@ -21,6 +21,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Session")
 	void FindSessions(int32 MaxSearchResults, bool bIsLANQuery);
+
+	UFUNCTION(BlueprintCallable, Category = "Session")
+	void JoinGameSesion(const FOnlineSessionSearchResult& SearchResult);
 private:
 	IOnlineSessionPtr Session;
 
@@ -31,7 +34,9 @@ private:
 
 	FDelegateHandle CreateHandle;
 	FDelegateHandle FindHandle;
+	FDelegateHandle JoinHandle;
 
 	void OnCreateSessionCompleted(FName SessionName, bool bSuccessful);
 	void OnFindSessionsCompleted(bool bSuccessful);
+	void OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 };
