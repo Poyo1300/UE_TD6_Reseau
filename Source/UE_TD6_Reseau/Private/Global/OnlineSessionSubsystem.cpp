@@ -101,6 +101,7 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 		Session->ClearOnFindSessionsCompleteDelegate_Handle(FindHandle);
 
 	SearchResults = LastSessionSearch->SearchResults;
+	GEngine->AddOnScreenDebugMessage(-1, 1, (SearchResults.Num() > 0 ? FColor::Green : FColor::Red), FString::Printf(TEXT("%d sessions found"), SearchResults.Num()));
 }
 
 void UOnlineSessionSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result)

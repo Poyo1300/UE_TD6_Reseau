@@ -18,6 +18,7 @@ void ULobbyWindowWidget::NativeConstruct()
 
 void ULobbyWindowWidget::OnRefreshButtonClicked()
 {
+	OnlineSessionSubsystem->FindSessions(10, false);
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Refresh");
 }
 
