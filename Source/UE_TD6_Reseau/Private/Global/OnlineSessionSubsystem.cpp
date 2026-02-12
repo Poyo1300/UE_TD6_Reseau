@@ -9,7 +9,7 @@ void UOnlineSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Session = Online::GetSessionInterface(GetWorld());
 }
 
-void UOnlineSessionSubsystem::CreateSession(FName SessionName, int32 NumPublicConnections, bool bIsLANMatch)
+void UOnlineSessionSubsystem::CreateSession(const FString& SessionName, int32 NumPublicConnections, bool bIsLANMatch)
 {
 	if (!Session.IsValid()) return;
 
@@ -29,7 +29,7 @@ void UOnlineSessionSubsystem::CreateSession(FName SessionName, int32 NumPublicCo
 
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 
-	if (!Session->CreateSession(*LocalPlayer->GetPreferredUniqueNetId(), SessionName, *LastSessionSettings))
+	if (!Session->CreateSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, *LastSessionSettings))
 	{
 		Session->ClearOnCreateSessionCompleteDelegate_Handle(CreateHandle);
 		return;

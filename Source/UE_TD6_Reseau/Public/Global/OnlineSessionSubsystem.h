@@ -17,12 +17,11 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category="Session")
-	void CreateSession(FName SessionName, int32 NumPublicConnections, bool bIsLANMatch);
+	void CreateSession(const FString& SessionName, int32 NumPublicConnections, bool bIsLANMatch);
 
 	UFUNCTION(BlueprintCallable, Category = "Session")
 	void FindSessions(int32 MaxSearchResults, bool bIsLANQuery);
 
-	UFUNCTION(BlueprintCallable, Category = "Session")
 	void JoinGameSesion(const FOnlineSessionSearchResult& SearchResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Session")
