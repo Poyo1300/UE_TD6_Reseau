@@ -19,11 +19,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Session")
 	void CreateSession(FName SessionName, int32 NumPublicConnections, bool bIsLANMatch);
 
+	UFUNCTION(BlueprintCallable, Category = "Session")
+	void FindSessions(int32 MaxSearchResults, bool bIsLANQuery);
 private:
 	IOnlineSessionPtr Session;
+
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
+	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
+
+	TArray<FOnlineSessionSearchResult> SearchResults;
 
 	FDelegateHandle CreateHandle;
+	FDelegateHandle FindHandle;
 
-	void OnCreateSessionComplete(FName SessionName, bool bSuccessful);
+	void OnCreateSessionCompleted(FName SessionName, bool bSuccessful);
+	void OnFindSessionsCompleted(bool bSuccessful);
 };
