@@ -1,10 +1,12 @@
 #include "UI/LobbyWindowWidget.h"
 #include "Global/OnlineSessionSubsystem.h"
-
+#include "Global/MenuGameMode.h"
 #include "Components/Button.h"
 
 void ULobbyWindowWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	OnlineSessionSubsystem = GetGameInstance()->GetSubsystem<UOnlineSessionSubsystem>();
 
 	if (Button_Refresh)
@@ -14,6 +16,10 @@ void ULobbyWindowWidget::NativeConstruct()
 	if (Button_Join)
 		Button_Join->OnClicked.AddDynamic(this, &ULobbyWindowWidget::OnJoinButtonClicked);
 		
+	if (AMenuGameMode* GameMode = Cast<AMenuGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		GameMode->LobbyWindowWidget = this;
+	}
 }
 
 void ULobbyWindowWidget::OnRefreshButtonClicked()
@@ -24,7 +30,7 @@ void ULobbyWindowWidget::OnRefreshButtonClicked()
 
 void ULobbyWindowWidget::OnCreateButtonClicked()
 {
-	OnlineSessionSubsystem->CreateSession("Session", -1, false);
+	OnlineSessionSubsystem->CreateSession("Session", 10, false);
 }
 
 void ULobbyWindowWidget::OnJoinButtonClicked()

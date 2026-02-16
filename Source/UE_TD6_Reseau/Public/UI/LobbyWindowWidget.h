@@ -5,12 +5,14 @@
 #include "LobbyWindowWidget.generated.h"
 
 class UButton;
+class UScrollBox;
 class UOnlineSessionSubsystem;
 UCLASS()
 class UE_TD6_RESEAU_API ULobbyWindowWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+private:
 	virtual void NativeConstruct() override;
 
 	TObjectPtr<UOnlineSessionSubsystem> OnlineSessionSubsystem;
@@ -32,4 +34,9 @@ protected:
 	
 	UFUNCTION()
 	void OnJoinButtonClicked();
+
+public:
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UScrollBox> Lobby_Box;
 };

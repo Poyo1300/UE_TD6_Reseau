@@ -1,5 +1,5 @@
 #include "Global/OnlineSessionSubsystem.h"
-
+#include "Global/MenuGameMode.h"
 #include "Online/OnlineSessionNames.h"
 #include "OnlineSubsystemUtils.h"
 
@@ -102,6 +102,16 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 
 	SearchResults = LastSessionSearch->SearchResults;
 	GEngine->AddOnScreenDebugMessage(-1, 1, (SearchResults.Num() > 0 ? FColor::Green : FColor::Red), FString::Printf(TEXT("%d sessions found"), SearchResults.Num()));
+
+	if (AMenuGameMode* GameMode = Cast<AMenuGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		for (const FOnlineSessionSearchResult& SearchResult : SearchResults)
+		{
+			GameMode->AddLobbyInfo(SearchResult.GetSessionIdStr(), 
+				SearchResult.Session.SessionSettings.NumPublicConnections - SearchResult.Session.NumOpenPublicConnections, 
+				SearchResult.Session.SessionSettings.NumPublicConnections, SearchResult.PingInMs);
+		}
+	}
 }
 
 void UOnlineSessionSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
