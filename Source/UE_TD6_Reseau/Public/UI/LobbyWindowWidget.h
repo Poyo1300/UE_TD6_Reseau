@@ -34,9 +34,4 @@ protected:
 	
 	UFUNCTION()
 	void OnJoinButtonClicked();
-
-public:
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UScrollBox> Lobby_Box;
 };

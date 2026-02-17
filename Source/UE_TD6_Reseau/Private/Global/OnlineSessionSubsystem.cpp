@@ -105,6 +105,7 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 
 	if (AMenuGameMode* GameMode = Cast<AMenuGameMode>(GetWorld()->GetAuthGameMode()))
 	{
+		GameMode->RemoveOldLobby();
 		for (const FOnlineSessionSearchResult& SearchResult : SearchResults)
 		{
 			GameMode->AddLobbyInfo(SearchResult.GetSessionIdStr(), 

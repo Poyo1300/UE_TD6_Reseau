@@ -26,18 +26,6 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> Button_Select;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> Name;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> CurrentPlayers;
-	
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> MaxPlayers;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> Ping;
-
 	UPROPERTY()
 	bool bIsSelected = false;
 };
