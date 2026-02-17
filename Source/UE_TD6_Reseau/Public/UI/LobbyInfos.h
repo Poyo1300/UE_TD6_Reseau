@@ -30,5 +30,6 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsSelected = false;
 
-	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
+
+	TSharedPtr<FOnlineSessionSearchResult> Session;
 };
