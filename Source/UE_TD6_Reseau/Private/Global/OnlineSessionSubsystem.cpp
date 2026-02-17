@@ -1,0 +1,137 @@
+#include "Global/OnlineSessionSubsystem.h"
+#include "Global/MenuGameMode.h"
+#include "Online/OnlineSessionNames.h"
+#include "OnlineSubsystemUtils.h"
+
+void UOnlineSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
+{
+	Super::Initialize(Collection);
+	Session = Online::GetSessionInterface(GetWorld());
+}
+
+void UOnlineSessionSubsystem::CreateSession(const FString& SessionName, int32 NumPublicConnections, bool bIsLANMatch)
+{
+	if (!Session.IsValid()) return;
+
+	LastSessionSettings = MakeShareable(new FOnlineSessionSettings());
+	
+	LastSessionSettings->NumPublicConnections = NumPublicConnections;
+	LastSessionSettings->bIsLANMatch = bIsLANMatch;
+	LastSessionSettings->bShouldAdvertise = true;
+	LastSessionSettings->bAllowJoinInProgress = true;
+	LastSessionSettings->bUsesPresence = true;
+	LastSessionSettings->bAllowJoinViaPresence = true;
+	LastSessionSettings->bIsDedicated = false;
+
+	LastSessionSettings->Set("SETTING_SESSIONNAME", SessionName, EOnlineDataAdvertisementType::ViaOnlineService);
+
+	CreateHandle = Session->AddOnCreateSessionCompleteDelegate_Handle(FOnCreateSessionCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnCreateSessionCompleted));
+
+	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+
+	if (!Session->CreateSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, *LastSessionSettings))
+	{
+		Session->ClearOnCreateSessionCompleteDelegate_Handle(CreateHandle);
+		return;
+	}
+}
+
+void UOnlineSessionSubsystem::FindSessions(int32 MaxSearchResults, bool bIsLANQuery)
+{
+	if (!Session.IsValid()) return;
+
+	FindHandle = Session->AddOnFindSessionsCompleteDelegate_Handle(FOnFindSessionsCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnFindSessionsCompleted));
+
+	LastSessionSearch = MakeShareable(new FOnlineSessionSearch());
+	LastSessionSearch->bIsLanQuery = bIsLANQuery;
+	LastSessionSearch->MaxSearchResults = MaxSearchResults;
+
+	LastSessionSearch->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
+
+	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+
+	if (!Session->FindSessions(*LocalPlayer->GetPreferredUniqueNetId(), LastSessionSearch.ToSharedRef()))
+	{
+		Session->ClearOnFindSessionsCompleteDelegate_Handle(FindHandle);
+		return;
+	}
+}
+
+void UOnlineSessionSubsystem::JoinGameSesion(const FOnlineSessionSearchResult& SessionResult)
+{
+	if (!Session.IsValid()) return;
+
+	JoinHandle = Session->AddOnJoinSessionCompleteDelegate_Handle(FOnJoinSessionCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnJoinSessionCompleted));
+
+	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
+
+	if (!Session->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
+	{
+		Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinHandle);
+		return;
+	}
+}
+
+void UOnlineSessionSubsystem::DestroySession()
+{
+	if (!Session.IsValid()) return;
+
+	DestroyHandle = Session->AddOnDestroySessionCompleteDelegate_Handle(FOnDestroySessionCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnDestroySessionCompleted));
+
+	if (!Session->DestroySession(NAME_GameSession))
+	{
+		Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroyHandle);
+		return;
+	}
+}
+
+void UOnlineSessionSubsystem::OnCreateSessionCompleted(FName SessionName, bool bSuccessful)
+{
+	if(Session)
+		Session->ClearOnCreateSessionCompleteDelegate_Handle(CreateHandle);
+
+	if (!bSuccessful) return;
+
+	GetWorld()->ServerTravel("/Game/Maps/LobbyLevel?listen");
+}
+
+void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
+{
+	if (Session) 
+		Session->ClearOnFindSessionsCompleteDelegate_Handle(FindHandle);
+
+	SearchResults = LastSessionSearch->SearchResults;
+	GEngine->AddOnScreenDebugMessage(-1, 1, (SearchResults.Num() > 0 ? FColor::Green : FColor::Red), FString::Printf(TEXT("%d sessions found"), SearchResults.Num()));
+
+	if (AMenuGameMode* GameMode = Cast<AMenuGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		GameMode->RemoveOldLobby();
+		for (const FOnlineSessionSearchResult& SearchResult : SearchResults)
+		{
+			GameMode->AddLobbyInfo(SearchResult.GetSessionIdStr(), 
+				SearchResult.Session.SessionSettings.NumPublicConnections - SearchResult.Session.NumOpenPublicConnections, 
+				SearchResult.Session.SessionSettings.NumPublicConnections, SearchResult.PingInMs);
+		}
+	}
+}
+
+void UOnlineSessionSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	FString ConnectString;
+
+	if (!Session) return;
+
+	Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinHandle);
+
+	if (Result != EOnJoinSessionCompleteResult::Success ||!Session->GetResolvedConnectString(NAME_GameSession, ConnectString)) return;
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	PlayerController->ClientTravel(ConnectString, ETravelType::TRAVEL_Absolute);
+}
+
+void UOnlineSessionSubsystem::OnDestroySessionCompleted(FName SessionName, bool bSuccessful)
+{
+	if(Session)
+		Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroyHandle);
+}
