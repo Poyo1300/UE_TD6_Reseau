@@ -5,7 +5,6 @@
 #include "LobbyWindowWidget.generated.h"
 
 class UButton;
-class UScrollBox;
 class UOnlineSessionSubsystem;
 UCLASS()
 class UE_TD6_RESEAU_API ULobbyWindowWidget : public UUserWidget

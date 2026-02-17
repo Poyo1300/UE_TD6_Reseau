@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "OnlineSessionSettings.h"
 #include "LobbyInfos.generated.h"
 
 class UButton;
@@ -26,6 +27,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> Button_Select;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	bool bIsSelected = false;
+
+	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
 };

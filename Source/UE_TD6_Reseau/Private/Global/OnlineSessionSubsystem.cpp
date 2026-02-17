@@ -108,7 +108,7 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 		GameMode->RemoveOldLobby();
 		for (const FOnlineSessionSearchResult& SearchResult : SearchResults)
 		{
-			GameMode->AddLobbyInfo(SearchResult.GetSessionIdStr(), 
+			GameMode->AddLobbyInfo(SearchResult.GetSessionIdStr(),
 				SearchResult.Session.SessionSettings.NumPublicConnections - SearchResult.Session.NumOpenPublicConnections, 
 				SearchResult.Session.SessionSettings.NumPublicConnections, SearchResult.PingInMs);
 		}

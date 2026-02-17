@@ -1,5 +1,6 @@
 #include "UI/LobbyInfos.h"
 #include "Components/Button.h"
+#include "UI/LobbyWindowWidget.h"
 
 void ULobbyInfos::NativeConstruct()
 {
@@ -11,5 +12,5 @@ void ULobbyInfos::NativeConstruct()
 
 void ULobbyInfos::OnSelectButtonClicked()
 {
-	bIsSelected = !bIsSelected;
+	
 }
