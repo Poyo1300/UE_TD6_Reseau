@@ -10,10 +10,6 @@ class UE_TD6_RESEAU_API AMenuGameMode : public AGameMode
 {
 	GENERATED_BODY()
 	
-protected:
-
-	AMenuGameMode();
-	virtual void BeginPlay() override;
 
 public: 
 
@@ -23,6 +19,4 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void RemoveOldLobby();
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void AddLobbyInfo(const FString& SessionName, int CurrentPlayers, int MaxPlayers, float Ping, int id);
 };

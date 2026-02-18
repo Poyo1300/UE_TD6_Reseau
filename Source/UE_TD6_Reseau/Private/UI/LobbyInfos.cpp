@@ -15,7 +15,7 @@ void ULobbyInfos::NativeConstruct()
 void ULobbyInfos::OnSelectButtonClicked()
 {
 	if (bIsSelected)
-		OnlineSessionSubsystem->SelectedSession = OnlineSessionSubsystem->SearchResults[id];
+		OnlineSessionSubsystem->SelectedSession = OnlineSessionSubsystem->SearchResults[SessionInfos.SessionSearchResultIndex];
 	else
 	{
 		OnlineSessionSubsystem->SelectedSession = FOnlineSessionSearchResult();
