@@ -24,5 +24,5 @@ public:
 	void RemoveOldLobby();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void AddLobbyInfo(const FString& SessionName, int CurrentPlayers, int MaxPlayers, float Ping);
+	void AddLobbyInfo(const FString& SessionName, int CurrentPlayers, int MaxPlayers, float Ping, int id);
 };

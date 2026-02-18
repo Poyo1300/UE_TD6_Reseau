@@ -35,5 +35,15 @@ void ULobbyWindowWidget::OnCreateButtonClicked()
 
 void ULobbyWindowWidget::OnJoinButtonClicked()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Join");
+	const FOnlineSessionSearchResult& TempResult = OnlineSessionSubsystem->SelectedSession;
+
+	if (TempResult.IsValid())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Join");
+		OnlineSessionSubsystem->JoinGameSesion(TempResult);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "No session selected");
+	}
 }

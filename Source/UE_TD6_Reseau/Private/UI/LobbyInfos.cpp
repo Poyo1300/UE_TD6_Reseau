@@ -6,11 +6,18 @@ void ULobbyInfos::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	OnlineSessionSubsystem = GetGameInstance()->GetSubsystem<UOnlineSessionSubsystem>();
+
 	if (Button_Select)
 		Button_Select->OnClicked.AddDynamic(this, &ULobbyInfos::OnSelectButtonClicked);
 }
 
 void ULobbyInfos::OnSelectButtonClicked()
 {
-	
+	if (bIsSelected)
+		OnlineSessionSubsystem->SelectedSession = OnlineSessionSubsystem->SearchResults[id];
+	else
+	{
+		OnlineSessionSubsystem->SelectedSession = FOnlineSessionSearchResult();
+	}
 }

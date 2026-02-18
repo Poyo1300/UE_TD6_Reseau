@@ -3,11 +3,11 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "OnlineSessionSettings.h"
+#include "Global/OnlineSessionSubsystem.h"
 #include "LobbyInfos.generated.h"
 
 class UButton;
 class UTextBlock;
-class UOnlineSessionSubsystem;
 UCLASS()
 class UE_TD6_RESEAU_API ULobbyInfos : public UUserWidget
 {
@@ -30,6 +30,6 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsSelected = false;
 
-
-	TSharedPtr<FOnlineSessionSearchResult> Session;
+	UPROPERTY(BlueprintReadWrite)
+	int id = -1;
 };
