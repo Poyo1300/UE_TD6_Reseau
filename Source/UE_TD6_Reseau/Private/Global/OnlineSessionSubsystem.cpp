@@ -213,14 +213,6 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 		SessionInfo.Ping = Result.PingInMs;
 		SessionInfo.SessionSearchResultIndex = i;
 
-		int SessionState;
-		Result.Session.SessionSettings.Get("SETTING_SESSIONSTATE", SessionState);
-
-		if (SessionState > 0)
-		{
-			continue;
-		}
-
 		SessionInfos.Add(SessionInfo);
 	}
 

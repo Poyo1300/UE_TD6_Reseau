@@ -9,4 +9,8 @@ class UE_TD6_RESEAU_API AMenuController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+
+	UFUNCTION(Client, Reliable)
+	void DestroySessionOnClient();
 };

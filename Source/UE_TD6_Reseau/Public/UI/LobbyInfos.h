@@ -32,4 +32,5 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	FSessionInfo SessionInfos;
+
 };
