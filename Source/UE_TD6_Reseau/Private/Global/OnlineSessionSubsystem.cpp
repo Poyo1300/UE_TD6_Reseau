@@ -105,12 +105,15 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 
 	if (AMenuGameMode* GameMode = Cast<AMenuGameMode>(GetWorld()->GetAuthGameMode()))
 	{
+		int id = 0;
 		GameMode->RemoveOldLobby();
 		for (const FOnlineSessionSearchResult& SearchResult : SearchResults)
 		{
-			GameMode->AddLobbyInfo(SearchResult.GetSessionIdStr(), 
+			GameMode->AddLobbyInfo(SearchResult.GetSessionIdStr(),
 				SearchResult.Session.SessionSettings.NumPublicConnections - SearchResult.Session.NumOpenPublicConnections, 
-				SearchResult.Session.SessionSettings.NumPublicConnections, SearchResult.PingInMs);
+				SearchResult.Session.SessionSettings.NumPublicConnections, SearchResult.PingInMs, id);
+
+			id++;
 		}
 	}
 }

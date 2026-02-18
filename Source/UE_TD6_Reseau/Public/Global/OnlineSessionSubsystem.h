@@ -21,18 +21,20 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Session")
 	void FindSessions(int32 MaxSearchResults, bool bIsLANQuery);
-
+	
 	void JoinGameSesion(const FOnlineSessionSearchResult& SearchResult);
 
 	UFUNCTION(BlueprintCallable, Category = "Session")
 	void DestroySession();
+
+	TArray<FOnlineSessionSearchResult> SearchResults;
+	FOnlineSessionSearchResult SelectedSession;
 private:
 	IOnlineSessionPtr Session;
 
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
 	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
 
-	TArray<FOnlineSessionSearchResult> SearchResults;
 
 	FDelegateHandle CreateHandle;
 	FDelegateHandle FindHandle;
