@@ -31,6 +31,6 @@ void ABaseTrap::Tick(float DeltaTime)
 
 void ABaseTrap::ActivateTrap()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Trap activated");
+	//Start cooldown
 }
 
