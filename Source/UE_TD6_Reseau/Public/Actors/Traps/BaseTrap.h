@@ -27,5 +27,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	void ActivateTrap();
+	virtual void ActivateTrap();
+
+	//Cooldown
 };
