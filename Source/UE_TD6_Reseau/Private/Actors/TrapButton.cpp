@@ -19,8 +19,6 @@ ATrapButton::ATrapButton()
 void ATrapButton::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	Press();
 }
 
 // Called every frame

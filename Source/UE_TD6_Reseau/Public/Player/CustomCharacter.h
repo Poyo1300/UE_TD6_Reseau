@@ -21,4 +21,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(EditAnywhere)
+	float InteractRange = 100.f;
+
+public:
+	UFUNCTION()
+	void Interact();
 };
