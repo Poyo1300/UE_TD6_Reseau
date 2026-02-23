@@ -1,4 +1,5 @@
 #include "Player/CustomCharacter.h"
+#include "Actors/TrapButton.h"
 
 ACustomCharacter::ACustomCharacter()
 {
@@ -20,4 +21,25 @@ void ACustomCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ACustomCharacter::Interact()
+{
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	FVector ViewLocation;
+	FRotator ViewRotation;
+	GetController()->GetPlayerViewPoint(ViewLocation, ViewRotation);
+
+	FVector End = ViewLocation + ViewRotation.Vector() * InteractRange;
+
+	if (!GetWorld()->LineTraceSingleByChannel(Hit, ViewLocation, End, ECC_Visibility, Params))
+		return;
+
+	if (TObjectPtr<ATrapButton> TrapButton = Cast<ATrapButton>(Hit.GetActor()))
+	{
+		TrapButton->Press();
+	}
 }

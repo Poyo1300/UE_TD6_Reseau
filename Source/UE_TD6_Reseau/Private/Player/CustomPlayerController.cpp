@@ -1,4 +1,5 @@
 #include "Player/CustomPlayerController.h"
+#include "Player/CustomCharacter.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -56,5 +57,13 @@ void ACustomPlayerController::Jump(const FInputActionValue& Value)
 	if (MyPlayer)
 	{
 		MyPlayer->Jump();
+	}
+}
+
+void ACustomPlayerController::Interact(const FInputActionValue& Value)
+{
+	if (TObjectPtr<ACustomCharacter> CustomChara = Cast<ACustomCharacter>(GetPawn()))
+	{
+		CustomChara->Interact();
 	}
 }

@@ -64,4 +64,7 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void Jump(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
+	void Interact(const FInputActionValue& Value);
 };
