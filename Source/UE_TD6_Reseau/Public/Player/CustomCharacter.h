@@ -25,7 +25,6 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float InteractRange = 100.f;
 
-
 public:
 	UFUNCTION()
 	void Interact();
