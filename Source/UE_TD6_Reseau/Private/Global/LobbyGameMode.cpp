@@ -1,4 +1,5 @@
 #include "Global/LobbyGameMode.h"
+#include "Global/LobbyGameState.h"
 
 void ALobbyGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
@@ -12,6 +13,10 @@ void ALobbyGameMode::OnPostLogin(AController* Controller)
 {
 	Super::OnPostLogin(Controller);
 
+	/*if (ALobbyGameState* LobbyGameState = Cast<ALobbyGameState>(GetWorld()->GetGameState()))
+	{
+		LobbyGameState->AddPlayer(Controller, 1);
+	}*/
 	AddPlayer(Controller);
 }
 
