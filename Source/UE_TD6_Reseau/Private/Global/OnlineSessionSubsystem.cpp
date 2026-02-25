@@ -2,6 +2,9 @@
 #include "Global/MenuGameMode.h"
 #include "Online/OnlineSessionNames.h"
 #include "OnlineSubsystemUtils.h"
+#include "OnlineBeaconHost.h"
+#include "beacons/LobbyBeaconHostObject.h"
+#include "beacons/LobbyBeaconClient.h"
 
 void UOnlineSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -23,7 +26,7 @@ void UOnlineSessionSubsystem::CreateSession(const FString& SessionName, int32 Nu
 	LastSessionSettings->bAllowJoinViaPresence = true;
 	LastSessionSettings->bIsDedicated = false;
 
-	LastSessionSettings->Set("SETTING_SESSIONNAME", SessionName, EOnlineDataAdvertisementType::ViaOnlineService);
+	LastSessionSettings->Set("SETTING_SESSIONNAME", SessionName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 	CreateHandle = Session->AddOnCreateSessionCompleteDelegate_Handle(FOnCreateSessionCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnCreateSessionCompleted));
 
@@ -57,7 +60,38 @@ void UOnlineSessionSubsystem::FindSessions(int32 MaxSearchResults, bool bIsLANQu
 	}
 }
 
-void UOnlineSessionSubsystem::JoinGameSesion(const FOnlineSessionSearchResult& SessionResult)
+void UOnlineSessionSubsystem::CustomJoinSessions(const FSessionInfo& SessionInfo)
+{
+	const FOnlineSessionSearchResult& TempResult = SearchResults[0];
+
+	FString ConnectString;
+
+	if (Session->GetResolvedConnectString(TempResult, NAME_GameSession, ConnectString))
+	{
+		ALobbyBeaconClient* BeaconClient = GetWorld()->SpawnActor<ALobbyBeaconClient>();
+
+		FURL Destination = FURL(nullptr, *ConnectString, ETravelType::TRAVEL_Absolute);
+		Destination.Port = 7787;
+
+		UE_LOG(LogTemp, Warning, TEXT("Attempting to connect to server with URL: %s"), *Destination.ToString());
+
+		BeaconClient->ConnectToServer(Destination);
+
+		BeaconClient->OnRequestValidate.BindLambda([this, TempResult](bool bIsValid)
+			{
+				if (bIsValid)
+				{
+					JoinGameSession(TempResult);
+				}
+				else
+				{
+					OnSessionJoinCompleted.Broadcast(false);
+				}
+			});
+	}
+}
+
+void UOnlineSessionSubsystem::JoinGameSession(const FOnlineSessionSearchResult& SessionResult)
 {
 	if (!Session.IsValid()) return;
 
@@ -85,6 +119,60 @@ void UOnlineSessionSubsystem::DestroySession()
 	}
 }
 
+void UOnlineSessionSubsystem::CreateHostBeacon(int32 ListenPort, bool bOverridePort)
+{
+	AOnlineBeaconHost* BeaconHost = GetWorld()->SpawnActor<AOnlineBeaconHost>();
+
+	/*if (bOverridePort)
+	{
+		BeaconHost->ListenPort = ListenPort;
+	}*/
+
+	if (BeaconHost->InitHost())
+	{
+		BeaconHost->PauseBeaconRequests(false);
+
+		if (ALobbyBeaconHostObject* HostObject = GetWorld()->SpawnActor<ALobbyBeaconHostObject>())
+		{
+			HostObject->ReservedSlots++;
+			HostObject->MaxSlots = MaxPlayers;
+
+			BeaconHost->RegisterHost(HostObject);
+			UE_LOG(LogTemp, Warning, TEXT("Host beacon created, port listening : %d"), BeaconHost->ListenPort);
+		}
+	}
+}
+
+template<typename ValueType>
+inline void UOnlineSessionSubsystem::UpdateCustomSetting(const FName& SettingName, const ValueType& SettingValue, EOnlineDataAdvertisementType::Type AdvertisementType)
+{
+	if (!Session)
+	{
+		return;
+	}
+
+	if (!LastSessionSettings)
+	{
+		return;
+	}
+
+	TSharedPtr<FOnlineSessionSettings> UpdatedSettings = MakeShareable(new FOnlineSessionSettings(*LastSessionSettings));
+
+	UpdatedSettings->Set(SettingName, SettingValue, AdvertisementType);
+
+	UpdateHandle = Session->AddOnUpdateSessionCompleteDelegate_Handle(
+		FOnUpdateSessionCompleteDelegate::CreateUObject(this,
+			&UOnlineSessionSubsystem::OnSettingsUpdatedCompleted));
+
+	if (!Session->UpdateSession(NAME_GameSession, *UpdatedSettings))
+	{
+		Session->ClearOnUpdateSessionCompleteDelegate_Handle(UpdateHandle);
+		return;
+	}
+
+	LastSessionSettings = UpdatedSettings;
+}
+
 void UOnlineSessionSubsystem::OnCreateSessionCompleted(FName SessionName, bool bSuccessful)
 {
 	if(Session)
@@ -103,19 +191,32 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 	SearchResults = LastSessionSearch->SearchResults;
 	GEngine->AddOnScreenDebugMessage(-1, 1, (SearchResults.Num() > 0 ? FColor::Green : FColor::Red), FString::Printf(TEXT("%d sessions found"), SearchResults.Num()));
 
-	if (AMenuGameMode* GameMode = Cast<AMenuGameMode>(GetWorld()->GetAuthGameMode()))
+	if (SearchResults.IsEmpty())
 	{
-		int id = 0;
-		GameMode->RemoveOldLobby();
-		for (const FOnlineSessionSearchResult& SearchResult : SearchResults)
-		{
-			GameMode->AddLobbyInfo(SearchResult.GetSessionIdStr(),
-				SearchResult.Session.SessionSettings.NumPublicConnections - SearchResult.Session.NumOpenPublicConnections, 
-				SearchResult.Session.SessionSettings.NumPublicConnections, SearchResult.PingInMs, id);
-
-			id++;
-		}
+		OnFindSessionsCompletedEvent.Broadcast(TArray<FSessionInfo>(), bSuccessful);
+		return;
 	}
+
+	TArray<FSessionInfo> SessionInfos;
+
+	for (int i = 0; i < SearchResults.Num(); i++)
+	{
+		FOnlineSessionSearchResult Result = SearchResults[i];
+
+		FSessionInfo SessionInfo;
+
+		FString SessionName;
+		Result.Session.SessionSettings.Get("SETTING_SESSIONNAME", SessionName);
+		SessionInfo.SessionName = SessionName;
+		SessionInfo.MaxPlayers = Result.Session.SessionSettings.NumPublicConnections;
+		SessionInfo.CurrentPlayers = SessionInfo.MaxPlayers - Result.Session.NumOpenPublicConnections;
+		SessionInfo.Ping = Result.PingInMs;
+		SessionInfo.SessionSearchResultIndex = i;
+
+		SessionInfos.Add(SessionInfo);
+	}
+
+	OnFindSessionsCompletedEvent.Broadcast(SessionInfos, bSuccessful);
 }
 
 void UOnlineSessionSubsystem::OnJoinSessionCompleted(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
@@ -137,4 +238,8 @@ void UOnlineSessionSubsystem::OnDestroySessionCompleted(FName SessionName, bool 
 {
 	if(Session)
 		Session->ClearOnDestroySessionCompleteDelegate_Handle(DestroyHandle);
+}
+
+void UOnlineSessionSubsystem::OnSettingsUpdatedCompleted(FName SessionName, bool bSuccessful)
+{
 }

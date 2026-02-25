@@ -31,5 +31,6 @@ public:
 	bool bIsSelected = false;
 
 	UPROPERTY(BlueprintReadWrite)
-	int id = -1;
+	FSessionInfo SessionInfos;
+
 };

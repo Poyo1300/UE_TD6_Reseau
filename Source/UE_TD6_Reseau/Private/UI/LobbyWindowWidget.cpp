@@ -24,7 +24,7 @@ void ULobbyWindowWidget::NativeConstruct()
 
 void ULobbyWindowWidget::OnRefreshButtonClicked()
 {
-	OnlineSessionSubsystem->FindSessions(10, false);
+	OnlineSessionSubsystem->FindSessions(20, false);
 	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Refresh");
 }
 
@@ -40,7 +40,7 @@ void ULobbyWindowWidget::OnJoinButtonClicked()
 	if (TempResult.IsValid())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Join");
-		OnlineSessionSubsystem->JoinGameSesion(TempResult);
+		OnlineSessionSubsystem->JoinGameSession(TempResult);
 	}
 	else
 	{
