@@ -7,6 +7,7 @@ void UOnlineSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	Session = Online::GetSessionInterface(GetWorld());
+	//bInitServerOnClient = true;
 }
 
 void UOnlineSessionSubsystem::CreateSession(const FString& SessionName, int32 NumPublicConnections, bool bIsLANMatch)
