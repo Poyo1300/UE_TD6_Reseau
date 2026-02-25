@@ -23,5 +23,5 @@ protected:
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void AddPlayer(AController* Controller);
+	void UpdatePlayer(AController* Controller);
 };

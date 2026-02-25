@@ -13,15 +13,14 @@ void ALobbyGameMode::OnPostLogin(AController* Controller)
 {
 	Super::OnPostLogin(Controller);
 
-	/*if (ALobbyGameState* LobbyGameState = Cast<ALobbyGameState>(GetWorld()->GetGameState()))
-	{
-		LobbyGameState->AddPlayer(Controller, 1);
-	}*/
-	AddPlayer(Controller);
+	UpdatePlayer(Controller);
 }
 
 void ALobbyGameMode::Logout(AController* Exiting)
 {
+	Super::Logout(Exiting);
+
+	UpdatePlayer(Exiting);
 }
 
 void ALobbyGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
