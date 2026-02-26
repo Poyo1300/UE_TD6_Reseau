@@ -1,0 +1,12 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/PlayerState.h"
+#include "LobbyPlayerState.generated.h"
+
+UCLASS()
+class UE_TD6_RESEAU_API ALobbyPlayerState : public APlayerState
+{
+	GENERATED_BODY()
+	
+};
