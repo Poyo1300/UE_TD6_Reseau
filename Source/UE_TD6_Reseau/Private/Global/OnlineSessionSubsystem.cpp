@@ -62,7 +62,7 @@ void UOnlineSessionSubsystem::FindSessions(int32 MaxSearchResults, bool bIsLANQu
 
 void UOnlineSessionSubsystem::CustomJoinSessions(const FSessionInfo& SessionInfo)
 {
-	const FOnlineSessionSearchResult& TempResult = SearchResults[0];
+	const FOnlineSessionSearchResult& TempResult = SearchResults[SessionInfo.SessionSearchResultIndex];
 
 	FString ConnectString;
 
@@ -216,6 +216,7 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 		SessionInfos.Add(SessionInfo);
 	}
 
+	SearchResultsInfos = SessionInfos;
 	OnFindSessionsCompletedEvent.Broadcast(SessionInfos, bSuccessful);
 }
 

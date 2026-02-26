@@ -42,7 +42,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Session")
 	void FindSessions(int32 MaxSearchResults, bool bIsLANQuery);
 
-	UFUNCTION(BlueprintCallable, Category = "Session")
 	void CustomJoinSessions(const FSessionInfo& SessionInfo);
 
 	void JoinGameSession(const FOnlineSessionSearchResult& SearchResult);
@@ -65,6 +64,8 @@ public:
 	int32 MaxPlayers = 0;
 	TArray<FOnlineSessionSearchResult> SearchResults;
 	FOnlineSessionSearchResult SelectedSession;
+	TArray<FSessionInfo> SearchResultsInfos;
+	FSessionInfo SelectedSessionInfos;
 
 private:
 	IOnlineSessionPtr Session;
