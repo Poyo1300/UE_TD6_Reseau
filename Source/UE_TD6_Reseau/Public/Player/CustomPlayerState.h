@@ -16,8 +16,11 @@ protected:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UPROPERTY(ReplicatedUsing = OnTeamChanged, BlueprintReadWrite)
+	int TeamID = 1;
+
 public:
 
-	UPROPERTY(BlueprintReadWrite, Replicated)
-	int TeamID = 1;
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTeamChanged();
 };
