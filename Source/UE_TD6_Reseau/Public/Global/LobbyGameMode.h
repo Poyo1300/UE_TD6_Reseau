@@ -24,4 +24,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void UpdatePlayer(AController* Controller);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void UpdateGameSettings();
 };

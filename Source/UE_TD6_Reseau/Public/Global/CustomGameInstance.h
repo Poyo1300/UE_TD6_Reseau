@@ -15,4 +15,11 @@ public:
 	TArray<APlayerController*> Team1Players;
 	UPROPERTY(BlueprintReadWrite)
 	TArray<APlayerController*> Team2Players;
+
+	UPROPERTY(BlueprintReadWrite)
+	int MaxPlayers = 10;
+	UPROPERTY(BlueprintReadWrite)
+	int GameTime = 60;
+	UPROPERTY(BlueprintReadWrite)
+	int MaxLives = 3;
 };
