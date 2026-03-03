@@ -1,6 +1,6 @@
 #include "Player/CustomCharacter.h"
 #include "Actors/TrapButton.h"
-
+#include "Global/CustomGameMode.h"
 ACustomCharacter::ACustomCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -42,4 +42,12 @@ void ACustomCharacter::Interact()
 	{
 		TrapButton->Press();
 	}
+}
+
+void ACustomCharacter::Kill()
+{
+	TObjectPtr<ACustomGameMode> GM = GetWorld()->GetAuthGameMode<ACustomGameMode>();
+	if (GM)
+		GM->HandlePlayerDeath(GetController());
+	//Destroy();
 }

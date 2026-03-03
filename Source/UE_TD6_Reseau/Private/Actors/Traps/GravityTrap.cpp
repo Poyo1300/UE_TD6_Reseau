@@ -9,8 +9,3 @@ void AGravityTrap::OnRep_IsActivated()
 
 	StaticMesh->SetEnableGravity(true);
 }
-
-void AGravityTrap::ActivateTrap()
-{
-	Super::ActivateTrap();
-}
