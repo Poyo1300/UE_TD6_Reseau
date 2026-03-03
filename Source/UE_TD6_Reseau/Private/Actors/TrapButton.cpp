@@ -13,6 +13,8 @@ ATrapButton::ATrapButton()
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("Static mesh component");
 	StaticMesh->SetupAttachment(RootComponent);
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -30,8 +32,23 @@ void ATrapButton::Tick(float DeltaTime)
 
 void ATrapButton::Press()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Pressed");
+	//GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Pressed");
+	//if (LinkedTrap)
+	//	LinkedTrap->ActivateTrap();
+	if (!HasAuthority())
+	{
+		Server_Press();
+		return;
+	}
+
 	if (LinkedTrap)
+	{
 		LinkedTrap->ActivateTrap();
+	}
+}
+
+void ATrapButton::Server_Press_Implementation()
+{
+	Press();
 }
 
