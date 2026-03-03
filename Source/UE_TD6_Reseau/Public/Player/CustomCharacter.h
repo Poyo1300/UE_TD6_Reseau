@@ -28,4 +28,7 @@ protected:
 public:
 	UFUNCTION()
 	void Interact();
+
+	UFUNCTION()
+	void Kill();
 };
