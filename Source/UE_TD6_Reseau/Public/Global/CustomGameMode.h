@@ -14,4 +14,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ActorToSpawn;
+
+	UFUNCTION()
+	void HandlePlayerDeath(AController* Controller);
 };
