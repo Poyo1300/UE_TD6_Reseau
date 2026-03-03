@@ -4,6 +4,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/PlayerState.h"
 #include "Components/Button.h"
+#include "Components/Slider.h"
 
 void ULobbyWindowWidget::NativeConstruct()
 {
@@ -34,7 +35,7 @@ void ULobbyWindowWidget::OnCreateButtonClicked()
 {
 	int index = GetWorld()->GetFirstLocalPlayerFromController()->GetLocalPlayerIndex();
 	APlayerState* PS = UGameplayStatics::GetPlayerState(GetWorld(), index);
-	OnlineSessionSubsystem->CreateSession(PS->GetPlayerName() + FString(TEXT("'s room")), 10, false);
+	OnlineSessionSubsystem->CreateSession(PS->GetPlayerName() + FString(TEXT("'s room")), Slider_Players->Value, false);
 }
 
 void ULobbyWindowWidget::OnJoinButtonClicked()

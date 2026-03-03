@@ -9,6 +9,11 @@ class UE_TD6_RESEAU_API ACustomGameState : public AGameState
 {
 	GENERATED_BODY()
 	
+protected:
+
+	UFUNCTION(BlueprintCallable)
+	void EndGame();
+
 public:
 
 	UPROPERTY(BlueprintReadWrite)
