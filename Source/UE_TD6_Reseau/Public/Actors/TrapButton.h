@@ -31,6 +31,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION()
 	void Press();
+
+	UFUNCTION(Server, Reliable)
+	void Server_Press();
 };

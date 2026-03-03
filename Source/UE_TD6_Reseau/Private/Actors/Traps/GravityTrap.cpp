@@ -3,11 +3,14 @@
 
 #include "Actors/Traps/GravityTrap.h"
 
+void AGravityTrap::OnRep_IsActivated()
+{
+	Super::OnRep_IsActivated();
+
+	StaticMesh->SetEnableGravity(true);
+}
+
 void AGravityTrap::ActivateTrap()
 {
 	Super::ActivateTrap();
-
-	StaticMesh->SetEnableGravity(true);
-
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Gravity trap activated");
 }

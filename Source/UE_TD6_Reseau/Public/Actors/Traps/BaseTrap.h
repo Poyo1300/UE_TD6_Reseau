@@ -12,21 +12,23 @@ class UE_TD6_RESEAU_API ABaseTrap : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ABaseTrap();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> StaticMesh;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(ReplicatedUsing = OnRep_IsActivated)
+	bool bIsActivated;
 
 	UFUNCTION()
+	virtual void OnRep_IsActivated();
+
+public:	
+	virtual void Tick(float DeltaTime) override;
 	virtual void ActivateTrap();
 
 	//Cooldown
