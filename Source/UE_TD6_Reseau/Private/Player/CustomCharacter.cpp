@@ -21,6 +21,8 @@ void ACustomCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (GetActorLocation().Z < -500.f)
+		Kill();
 }
 
 void ACustomCharacter::Interact()
