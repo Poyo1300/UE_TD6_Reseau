@@ -40,7 +40,7 @@ void ULobbyWindowWidget::OnJoinButtonClicked()
 	if (TempResult.IsValid())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Join");
-		OnlineSessionSubsystem->JoinGameSession(TempResult);
+		OnlineSessionSubsystem->JoinGameSession(OnlineSessionSubsystem->SelectedSessionInfos);
 	}
 	else
 	{

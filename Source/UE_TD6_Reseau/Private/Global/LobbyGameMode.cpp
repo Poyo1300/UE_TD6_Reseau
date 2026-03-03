@@ -14,6 +14,7 @@ void ALobbyGameMode::OnPostLogin(AController* Controller)
 	Super::OnPostLogin(Controller);
 
 	UpdatePlayer(Controller);
+	UpdateGameSettings();
 }
 
 void ALobbyGameMode::Logout(AController* Exiting)

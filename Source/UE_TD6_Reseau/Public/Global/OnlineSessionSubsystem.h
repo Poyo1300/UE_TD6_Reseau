@@ -44,7 +44,7 @@ public:
 
 	void CustomJoinSessions(const FSessionInfo& SessionInfo);
 
-	void JoinGameSession(const FOnlineSessionSearchResult& SearchResult);
+	void JoinGameSession(const FSessionInfo& SessionInfo);
 	
 	UFUNCTION(BlueprintCallable, Category = "Session")
 	void DestroySession();
