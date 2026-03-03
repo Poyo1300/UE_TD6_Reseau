@@ -26,7 +26,8 @@ void UOnlineSessionSubsystem::CreateSession(const FString& SessionName, int32 Nu
 	LastSessionSettings->bAllowJoinViaPresence = true;
 	LastSessionSettings->bIsDedicated = false;
 
-	LastSessionSettings->Set("SETTING_SESSIONNAME", SessionName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+	LastSessionSettings->Set("SETTING_SESSIONNAME", SessionName, EOnlineDataAdvertisementType::ViaOnlineService);
+	LastSessionSettings->Set("SETTING_SESSIONMAXPLAYERS", NumPublicConnections, EOnlineDataAdvertisementType::ViaOnlineService);
 
 	CreateHandle = Session->AddOnCreateSessionCompleteDelegate_Handle(FOnCreateSessionCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnCreateSessionCompleted));
 
@@ -65,6 +66,7 @@ void UOnlineSessionSubsystem::CustomJoinSessions(const FSessionInfo& SessionInfo
 	const FOnlineSessionSearchResult& TempResult = SearchResults[SessionInfo.SessionSearchResultIndex];
 
 	FString ConnectString;
+	FName name = NAME_GameSession;
 
 	if (Session->GetResolvedConnectString(TempResult, NAME_GameSession, ConnectString))
 	{
@@ -81,7 +83,7 @@ void UOnlineSessionSubsystem::CustomJoinSessions(const FSessionInfo& SessionInfo
 			{
 				if (bIsValid)
 				{
-					JoinGameSession(TempResult);
+					//JoinGameSession(SessionInfo);
 				}
 				else
 				{
@@ -91,15 +93,24 @@ void UOnlineSessionSubsystem::CustomJoinSessions(const FSessionInfo& SessionInfo
 	}
 }
 
-void UOnlineSessionSubsystem::JoinGameSession(const FOnlineSessionSearchResult& SessionResult)
+void UOnlineSessionSubsystem::JoinGameSession(const FSessionInfo& SessionInfo)
 {
 	if (!Session.IsValid()) return;
+
+	const FOnlineSessionSearchResult& TempResult = SearchResults[SessionInfo.SessionSearchResultIndex];
+
+	if (SessionInfo.CurrentPlayers == SessionInfo.MaxPlayers)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "Session full");
+
+		return;
+	}
 
 	JoinHandle = Session->AddOnJoinSessionCompleteDelegate_Handle(FOnJoinSessionCompleteDelegate::CreateUObject(this, &UOnlineSessionSubsystem::OnJoinSessionCompleted));
 
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
 
-	if (!Session->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, SessionResult))
+	if (!Session->JoinSession(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, TempResult))
 	{
 		Session->ClearOnJoinSessionCompleteDelegate_Handle(JoinHandle);
 		return;
@@ -204,12 +215,11 @@ void UOnlineSessionSubsystem::OnFindSessionsCompleted(bool bSuccessful)
 		FOnlineSessionSearchResult Result = SearchResults[i];
 
 		FSessionInfo SessionInfo;
-
 		FString SessionName;
 		Result.Session.SessionSettings.Get("SETTING_SESSIONNAME", SessionName);
 		SessionInfo.SessionName = SessionName;
 		SessionInfo.MaxPlayers = Result.Session.SessionSettings.NumPublicConnections;
-		SessionInfo.CurrentPlayers = SessionInfo.MaxPlayers - Result.Session.NumOpenPublicConnections;
+		SessionInfo.CurrentPlayers = Result.Session.SessionSettings.NumPublicConnections - Result.Session.NumOpenPublicConnections;
 		SessionInfo.Ping = Result.PingInMs;
 		SessionInfo.SessionSearchResultIndex = i;
 
