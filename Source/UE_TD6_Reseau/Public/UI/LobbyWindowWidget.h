@@ -5,6 +5,7 @@
 #include "LobbyWindowWidget.generated.h"
 
 class UButton;
+class USlider;
 class UOnlineSessionSubsystem;
 UCLASS()
 class UE_TD6_RESEAU_API ULobbyWindowWidget : public UUserWidget
@@ -24,6 +25,9 @@ protected:
 
 	UPROPERTY(meta=(BindWidget))
 	TObjectPtr<UButton> Button_Join;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USlider> Slider_Players;
 
 	UFUNCTION()
 	void OnRefreshButtonClicked();
