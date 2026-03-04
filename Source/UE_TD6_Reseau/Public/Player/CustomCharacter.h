@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "CustomCharacter.generated.h"
 
 UCLASS()
@@ -25,10 +26,27 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float InteractRange = 100.f;
 
+	UPROPERTY()
+	bool bIsDead = false;
+	UPROPERTY()
+	bool bCanTakeDamage = true;
+
+	FTimerHandle DamageCooldown;
+
 public:
+
+	UPROPERTY(BlueprintReadWrite)
+	int Lives = 10;
+
 	UFUNCTION()
 	void Interact();
 
 	UFUNCTION()
 	void Kill();
+
+	UFUNCTION(Server, Reliable)
+	void Respawn();
+
+	UFUNCTION()
+	void CanTakeDamage();
 };

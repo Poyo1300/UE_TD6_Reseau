@@ -78,4 +78,8 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void OpenMenu(const FInputActionValue& Value);
+public:
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void UpdatePlayerLives(int Value);
 };

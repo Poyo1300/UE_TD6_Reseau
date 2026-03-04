@@ -1,6 +1,7 @@
 #include "Player/CustomPlayerController.h"
 #include "Player/CustomCharacter.h"
 #include "UI/EndGameWidget.h"
+#include "Global/CustomGameInstance.h"
 
 void ACustomPlayerController::BeginPlay()
 {
@@ -28,8 +29,6 @@ void ACustomPlayerController::BeginPlay()
 			InputSystem->AddMappingContext(MappingContextGame, 0);
 		}
 	}
-
-	MyPlayer = Cast<ACustomCharacter>(GetPawn());
 }
 
 void ACustomPlayerController::Tick(float DeltaTime)
