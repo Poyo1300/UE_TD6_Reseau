@@ -31,9 +31,3 @@ void ATrapButton::Press()
 		LinkedTrap->ActivateTrap();
 	}
 }
-
-void ATrapButton::Server_Press_Implementation()
-{
-	Press();
-}
-
