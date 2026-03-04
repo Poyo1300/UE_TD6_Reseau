@@ -6,6 +6,9 @@
 void UEndGameWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	OnlineSessionSubsystem = GetGameInstance()->GetSubsystem<UOnlineSessionSubsystem>();
+
 	if (QuitButton)
 	{
 		QuitButton->OnClicked.AddDynamic(this, &UEndGameWidget::OnQuitButtonClicked);
@@ -20,7 +23,8 @@ void UEndGameWidget::OnMenuButtonClicked()
 {
 	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
 	{
-		UGameplayStatics::OpenLevel(this, FName("MenuLevel"));
+		OnlineSessionSubsystem->DestroySession();
+		UGameplayStatics::OpenLevel(GetWorld(), "MenuLevel");
 	}
 }
 

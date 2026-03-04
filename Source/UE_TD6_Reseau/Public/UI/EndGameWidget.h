@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Global/OnlineSessionSubsystem.h"
 #include "EndGameWidget.generated.h"
 
 class UButton;
@@ -11,6 +12,10 @@ class UE_TD6_RESEAU_API UEndGameWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+private:
+
+	TObjectPtr<UOnlineSessionSubsystem> OnlineSessionSubsystem;
+
 public:
 	virtual void NativeConstruct() override;
 
