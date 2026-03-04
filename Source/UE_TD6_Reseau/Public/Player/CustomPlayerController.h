@@ -9,6 +9,8 @@
 #include "CustomCharacter.h"
 #include "CustomPlayerController.generated.h"
 
+class UEndGameWidget;
+
 USTRUCT(BlueprintType)
 struct FInputActionSetup
 {
@@ -28,10 +30,10 @@ UCLASS()
 class UE_TD6_RESEAU_API ACustomPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+	bool bIsMenuOpen;
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void Tick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 
 	void OnDestroy();
@@ -45,7 +47,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float CameraSensitivity = 30.f;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UEndGameWidget> EndGameWidgetClass = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UEndGameWidget> EndGameWidget = nullptr;
 private:
+	float t;
 
 	UPROPERTY(Transient)
 	TObjectPtr<ACustomCharacter> MyPlayer = nullptr;
@@ -67,4 +75,7 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void Interact(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
+	void OpenMenu(const FInputActionValue& Value);
 };

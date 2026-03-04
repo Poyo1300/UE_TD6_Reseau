@@ -1,9 +1,20 @@
 #include "Player/CustomPlayerController.h"
 #include "Player/CustomCharacter.h"
+#include "UI/EndGameWidget.h"
 
 void ACustomPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	if (EndGameWidgetClass)
+	{
+		EndGameWidget = CreateWidget<UEndGameWidget>(GetWorld(), EndGameWidgetClass);
+		if (EndGameWidget)
+		{
+			EndGameWidget->AddToViewport();
+			EndGameWidget->SetVisibility(ESlateVisibility::Hidden);
+			bIsMenuOpen = false;
+		}
+	}
 
 	if (!MappingContextGame)
 	{
@@ -19,6 +30,12 @@ void ACustomPlayerController::BeginPlay()
 	}
 
 	MyPlayer = Cast<ACustomCharacter>(GetPawn());
+}
+
+void ACustomPlayerController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	t += DeltaTime;
 }
 
 void ACustomPlayerController::SetupInputComponent()
@@ -66,4 +83,43 @@ void ACustomPlayerController::Interact(const FInputActionValue& Value)
 	{
 		CustomChara->Interact();
 	}
+}
+
+void ACustomPlayerController::OpenMenu(const FInputActionValue& Value)
+{
+	if (t > 2.f)
+	{
+		t = 0.f;
+		if (bIsMenuOpen )
+		{
+			if (EndGameWidget)
+			{
+				EndGameWidget->SetVisibility(ESlateVisibility::Hidden);
+
+				TObjectPtr<APlayerController> PlayerController = GetWorld()->GetFirstPlayerController();
+				if (PlayerController)
+				{
+					PlayerController->bShowMouseCursor = false;
+					PlayerController->SetInputMode(FInputModeGameOnly());
+				}
+
+			}
+		}
+		else
+		{
+			if (EndGameWidget)
+			{
+				EndGameWidget->SetVisibility(ESlateVisibility::Visible);
+
+				TObjectPtr<APlayerController> PlayerController = GetWorld()->GetFirstPlayerController();
+				if (PlayerController)
+				{
+					PlayerController->bShowMouseCursor = true;
+					PlayerController->SetInputMode(FInputModeUIOnly());
+				}
+
+			}
+		}
+	}
+	bIsMenuOpen = !bIsMenuOpen;
 }
