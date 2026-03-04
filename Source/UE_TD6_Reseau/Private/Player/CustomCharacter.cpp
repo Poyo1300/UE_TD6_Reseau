@@ -48,6 +48,7 @@ void ACustomCharacter::Interact()
 
 void ACustomCharacter::Kill()
 {
+
 	TObjectPtr<ACustomGameMode> GM = GetWorld()->GetAuthGameMode<ACustomGameMode>();
 	if (GM)
 		GM->SetSpectatorMode(GetController());
