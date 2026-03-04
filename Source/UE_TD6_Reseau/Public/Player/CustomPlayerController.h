@@ -67,4 +67,9 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void Interact(const FInputActionValue& Value);
+
+public:
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void UpdatePlayerLives(int Value);
 };
