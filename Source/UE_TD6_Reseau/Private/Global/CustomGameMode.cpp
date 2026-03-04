@@ -1,6 +1,6 @@
 #include "Global/CustomGameMode.h"
 
-void ACustomGameMode::HandlePlayerDeath(AController* Controller)
+void ACustomGameMode::SetSpectatorMode(AController* Controller)
 {
 	if (!Controller) return;
 
@@ -8,9 +8,7 @@ void ACustomGameMode::HandlePlayerDeath(AController* Controller)
 	if (Pawn)
 		Pawn->Destroy();
 
-	//Controller->UnPossess();
-	Controller->ChangeState(NAME_Spectating);
-	
-	RestartPlayer(Controller);
+	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "SpecatorMode");
 
+	RestartPlayer(Controller); //respawn de base pour eviter le crash
 }

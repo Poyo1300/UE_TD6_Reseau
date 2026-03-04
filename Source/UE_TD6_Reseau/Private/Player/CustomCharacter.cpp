@@ -50,6 +50,6 @@ void ACustomCharacter::Kill()
 {
 	TObjectPtr<ACustomGameMode> GM = GetWorld()->GetAuthGameMode<ACustomGameMode>();
 	if (GM)
-		GM->HandlePlayerDeath(GetController());
+		GM->SetSpectatorMode(GetController());
 	//Destroy();
 }

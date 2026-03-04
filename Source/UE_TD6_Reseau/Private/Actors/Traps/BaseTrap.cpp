@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "Actors/Traps/BaseTrap.h"
-
+#include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -28,26 +28,41 @@ void ABaseTrap::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 void ABaseTrap::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ABaseTrap::OnRep_IsActivated()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Trap activated: %s"), *GetName()));
+	if (bIsActivated)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Trap activated: %s"), *GetName()));
+		GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &ABaseTrap::Respawn, RespawnDelay, false);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, FString::Printf(TEXT("Trap respawn: %s"), *GetName()));
+	}
 }
 
 // Called every frame
 void ABaseTrap::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ABaseTrap::ActivateTrap()
 {
-	if (HasAuthority())
+	if (HasAuthority() && !bIsActivated)
 	{
 		bIsActivated = true;
+		OnRep_IsActivated();
+	}
+}
+
+void ABaseTrap::Respawn()
+{
+	if (HasAuthority())
+	{
+		bIsActivated = false;
 		OnRep_IsActivated();
 	}
 }

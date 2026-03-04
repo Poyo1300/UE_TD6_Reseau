@@ -3,9 +3,24 @@
 
 #include "Actors/Traps/GravityTrap.h"
 
+void AGravityTrap::BeginPlay()
+{
+	Super::BeginPlay();
+	InitPos = GetActorLocation();
+}
+
 void AGravityTrap::OnRep_IsActivated()
 {
 	Super::OnRep_IsActivated();
-
-	StaticMesh->SetEnableGravity(true);
+	if (bIsActivated)
+		StaticMesh->SetEnableGravity(true);
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Gravity Trap activated: %s"), *GetName()));
+		StaticMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		StaticMesh->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
+		
+		StaticMesh->SetEnableGravity(false);
+		SetActorLocation(InitPos);
+	}
 }
