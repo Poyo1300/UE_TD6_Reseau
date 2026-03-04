@@ -26,12 +26,6 @@ void ATrapButton::Tick(float DeltaTime)
 
 void ATrapButton::Press()
 {
-	if (!HasAuthority())
-	{
-		Server_Press();
-		return;
-	}
-
 	if (LinkedTrap)
 	{
 		LinkedTrap->ActivateTrap();

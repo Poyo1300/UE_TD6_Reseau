@@ -51,18 +51,9 @@ void ABaseTrap::Tick(float DeltaTime)
 
 void ABaseTrap::ActivateTrap()
 {
-	if (HasAuthority() && !bIsActivated)
+	if (!bIsActivated)
 	{
 		bIsActivated = true;
-		OnRep_IsActivated();
-	}
-}
-
-void ABaseTrap::Respawn()
-{
-	if (HasAuthority())
-	{
-		bIsActivated = false;
 		OnRep_IsActivated();
 	}
 }

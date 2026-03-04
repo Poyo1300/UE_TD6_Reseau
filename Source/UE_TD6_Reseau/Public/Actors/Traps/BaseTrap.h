@@ -35,6 +35,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void ActivateTrap();
 
-	virtual void Respawn();
 	//Cooldown
 };
