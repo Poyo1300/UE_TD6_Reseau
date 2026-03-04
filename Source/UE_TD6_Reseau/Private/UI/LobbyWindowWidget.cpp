@@ -1,7 +1,10 @@
 #include "UI/LobbyWindowWidget.h"
 #include "Global/OnlineSessionSubsystem.h"
 #include "Global/MenuGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerState.h"
 #include "Components/Button.h"
+#include "Components/Slider.h"
 
 void ULobbyWindowWidget::NativeConstruct()
 {
@@ -30,7 +33,9 @@ void ULobbyWindowWidget::OnRefreshButtonClicked()
 
 void ULobbyWindowWidget::OnCreateButtonClicked()
 {
-	OnlineSessionSubsystem->CreateSession("Session", 10, false);
+	int index = GetWorld()->GetFirstLocalPlayerFromController()->GetLocalPlayerIndex();
+	APlayerState* PS = UGameplayStatics::GetPlayerState(GetWorld(), index);
+	OnlineSessionSubsystem->CreateSession(PS->GetPlayerName() + FString(TEXT("'s room")), Slider_Players->Value, false);
 }
 
 void ULobbyWindowWidget::OnJoinButtonClicked()
