@@ -7,7 +7,7 @@
 #include "ExplosionTrap.generated.h"
 
 class USphereComponent;
-
+class UAudioComponent;
 /**
  * 
  */
@@ -16,6 +16,9 @@ class UE_TD6_RESEAU_API AExplosionTrap : public ABaseTrap
 {
 	GENERATED_BODY()
 protected:
+
+	virtual void BeginPlay() override;
+
 	AExplosionTrap();
 
 	UPROPERTY(EditAnywhere)
@@ -24,6 +27,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USphereComponent> ExplosionRange;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USoundBase> Sound;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAudioComponent> AudioComponent;
 public:
 
 	virtual void OnRep_IsActivated() override;

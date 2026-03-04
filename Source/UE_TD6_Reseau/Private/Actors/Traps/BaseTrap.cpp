@@ -13,7 +13,7 @@ ABaseTrap::ABaseTrap()
 
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("Static mesh component");
 	StaticMesh->SetupAttachment(RootComponent);
-
+	
 	bReplicates = true;
 	bIsActivated = false;
 }
@@ -35,7 +35,7 @@ void ABaseTrap::OnRep_IsActivated()
 	if (bIsActivated)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Green, FString::Printf(TEXT("Trap activated: %s"), *GetName()));
-		GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &ABaseTrap::Respawn, RespawnDelay, false);
+		//GetWorld()->GetTimerManager().SetTimer(RespawnTimer, this, &ABaseTrap::Respawn, RespawnDelay, false);
 	}
 	else
 	{
