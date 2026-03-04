@@ -12,4 +12,6 @@ public:
 	UFUNCTION()
 	void SetSpectatorMode(AController* Controller);
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> ActorToSpawn;
 };

@@ -1,14 +1,20 @@
 #include "Global/CustomGameMode.h"
+#include "GameFramework/SpectatorPawn.h"
 
 void ACustomGameMode::SetSpectatorMode(AController* Controller)
 {
 	if (!Controller) return;
-
 	TObjectPtr<APawn> Pawn = Controller->GetPawn();
+
+	ASpectatorPawn* SpectatorPawn;
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = Controller;
+	
+	SpectatorPawn = GetWorld()->SpawnActor<ASpectatorPawn>(ActorToSpawn, Pawn->GetActorLocation(), Pawn->GetActorRotation(), SpawnParams);
+
+	Controller->UnPossess();
 	if (Pawn)
 		Pawn->Destroy();
 
-	GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Red, "SpecatorMode");
-
-	RestartPlayer(Controller); //respawn de base pour eviter le crash
+	Controller->Possess(SpectatorPawn);
 }
