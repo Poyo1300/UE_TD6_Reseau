@@ -9,5 +9,9 @@ class UE_TD6_RESEAU_API AGravityTrap : public ABaseTrap
 {
 	GENERATED_BODY()
 	
+	virtual void BeginPlay() override;
+
 	virtual void OnRep_IsActivated() override;
+
+	FVector InitPos;
 };

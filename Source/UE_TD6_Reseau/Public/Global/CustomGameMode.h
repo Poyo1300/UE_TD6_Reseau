@@ -10,6 +10,6 @@ class UE_TD6_RESEAU_API ACustomGameMode : public AGameMode
 	GENERATED_BODY()
 public:
 	UFUNCTION()
-	void HandlePlayerDeath(AController* Controller);
+	void SetSpectatorMode(AController* Controller);
 
 };
