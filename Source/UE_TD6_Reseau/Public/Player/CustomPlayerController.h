@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/PlayerController.h"
 #include "CustomCharacter.h"
+#include "UI/EndGameWidget.h"
 #include "CustomPlayerController.generated.h"
 
 USTRUCT(BlueprintType)
@@ -29,8 +30,10 @@ class UE_TD6_RESEAU_API ACustomPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+	bool bIsMenuOpen;
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupInputComponent() override;
 
@@ -44,6 +47,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	float CameraSensitivity = 30.f;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UEndGameWidget> EndGameWidgetClass = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UEndGameWidget> EndGameWidget = nullptr;
+private:
+	float t;
 
 private:
 
@@ -67,6 +78,9 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void Interact(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
+	void OpenMenu(const FInputActionValue& Value);
 
 public:
 
