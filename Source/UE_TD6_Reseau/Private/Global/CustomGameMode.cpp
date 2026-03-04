@@ -4,6 +4,7 @@
 void ACustomGameMode::SetSpectatorMode(AController* Controller)
 {
 	if (!Controller) return;
+
 	TObjectPtr<APawn> Pawn = Controller->GetPawn();
 
 	ASpectatorPawn* SpectatorPawn;
@@ -24,6 +25,14 @@ void ACustomGameMode::HandlePlayerDeath(AController* Controller)
 	if (!Controller) return;
 
 	TObjectPtr<APawn> Pawn = Controller->GetPawn();
+
+	ASpectatorPawn* SpectatorPawn;
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = Controller;
+	
+	SpectatorPawn = GetWorld()->SpawnActor<ASpectatorPawn>(ActorToSpawn, Pawn->GetActorLocation(), Pawn->GetActorRotation(), SpawnParams);
+
+	Controller->UnPossess();
 	if (Pawn)
 		Pawn->Destroy();
 
@@ -32,4 +41,5 @@ void ACustomGameMode::HandlePlayerDeath(AController* Controller)
 	
 	RestartPlayer(Controller);
 
+	Controller->Possess(SpectatorPawn);
 }
